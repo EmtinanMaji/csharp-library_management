@@ -1,5 +1,37 @@
 ﻿using System;
 
+public interface INotificationService
+{
+    void SendNotificationOnSuccess(string successMessage);
+    void SendNotificationOnFailure(string errorMessage);
+}
+
+public class EmailNotificationService : INotificationService
+{
+    public void SendNotificationOnSuccess(string successMessage)
+    {
+        Console.WriteLine($"Email sent a notification on success: Hello, {successMessage}. If you have any queries or feedback, please contact our support team at support@library.com.");
+    }
+
+    public void SendNotificationOnFailure(string errorMessage)
+    {
+        Console.WriteLine($"Email sent a notification on failure: {errorMessage}.  For more help, visit our FAQ at library.com/faq.");
+    }
+}
+
+public class SMSNotificationService : INotificationService
+{
+    public void SendNotificationOnSuccess(string successMessage)
+    {
+        Console.WriteLine($"SMS sent a notification on success: {successMessage}. Thank you!");
+    }
+
+    public void SendNotificationOnFailure(string errorMessage)
+    {
+        Console.WriteLine($"SMS sent a notification on failure: {errorMessage}. Please email support@library.com.");
+    }
+}
+
 public class LibraryItem
 {
     public Guid Id { get; }
@@ -32,19 +64,30 @@ public class User : LibraryItem
 
 public class Library
 {
-    private List<Book> books = new List<Book>();
-    private List<User> users = new List<User>();
+    private List<Book> books;
+    private List<User> users;
+
+    private INotificationService notificationService;
+
+    public Library(INotificationService notificationService)
+    {
+        books = new List<Book>();
+        users = new List<User>();
+        this.notificationService = notificationService;
+    }
 
     public void AddBook(Book book)
     {
         books.Add(book);
-        Console.WriteLine($"Book '{book.Title}' added successfully.");
+        //Console.WriteLine($"Book '{book.Title}' added successfully.");
+        notificationService.SendNotificationOnSuccess($"Book '{book.Title}' added successfully to the Library.");
     }
 
     public void AddUser(User user)
     {
         users.Add(user);
-        Console.WriteLine($"User '{user.Title}' added successfully.");
+        //onsole.WriteLine($"User '{user.Title}' added successfully.");
+        notificationService.SendNotificationOnSuccess($"User '{user.Title}' added successfully to the Library.");
     }
 
     public List<Book> FindBooksByTitle(string title)
@@ -112,9 +155,11 @@ public class Library
         if (bookToRemove != null)
         {
             books.Remove(bookToRemove);
-            Console.WriteLine($"Book with ID '{id}' deleted successfully.");
+            //Console.WriteLine($"Book with ID '{id}' deleted successfully.");
+            notificationService.SendNotificationOnSuccess($"Book with ID '{id}' deleted successfully from the Library.");
         }else{
-            Console.WriteLine($"Book with ID '{id}' was not found");
+            //Console.WriteLine($"Book with ID '{id}' was not found");
+            notificationService.SendNotificationOnFailure($"Book with ID '{id}' was not found in the Library.");
         }
     }
 
@@ -124,9 +169,11 @@ public class Library
         if (userToRemove != null)
         {
             users.Remove(userToRemove);
-            Console.WriteLine($"User with ID '{id}' deleted successfully.");
+            //Console.WriteLine($"User with ID '{id}' deleted successfully.");
+            notificationService.SendNotificationOnSuccess($"User with ID '{id}' deleted successfully from the Library.");
         }else{
-            Console.WriteLine($"User with ID '{id}' was not found");
+            //Console.WriteLine($"User with ID '{id}' was not found");
+            notificationService.SendNotificationOnFailure($"User with ID '{id}' was not found in the Library.");
         }
     }
 }
@@ -135,6 +182,12 @@ internal class Program
 {
     private static void Main()
     {
+        var emailService = new EmailNotificationService();
+        var smsService = new SMSNotificationService();
+
+        var libraryWithEmail = new Library(emailService);
+        var libraryWithSMS = new Library(smsService);
+
         var user1 = new User("Alice", new DateTime(2023, 1, 1));
         var user2 = new User("Bob", new DateTime(2023, 2, 1));
         var user3 = new User("Charlie", new DateTime(2023, 3, 1));
@@ -167,49 +220,48 @@ internal class Program
         var book19 = new Book("The Iliad");
         var book20 = new Book("Anna Karenina");
 
-        Library library = new Library();
 
-        library.AddUser(user1);
-        library.AddUser(user2);
-        library.AddUser(user3);
-        library.AddUser(user4);
-        library.AddUser(user5);
-        library.AddUser(user6);
-        library.AddUser(user7);
-        library.AddUser(user8);
-        library.AddUser(user9);
-        library.AddUser(user10);
+        libraryWithEmail.AddUser(user1);
+        libraryWithEmail.AddUser(user2);
+        libraryWithEmail.AddUser(user3);
+        libraryWithEmail.AddUser(user4);
+        libraryWithEmail.AddUser(user5);
+        libraryWithEmail.AddUser(user6);
+        libraryWithEmail.AddUser(user7);
+        libraryWithEmail.AddUser(user8);
+        libraryWithEmail.AddUser(user9);
+        libraryWithEmail.AddUser(user10);
 
-        library.AddBook(book1);
-        library.AddBook(book2);
-        library.AddBook(book3);
-        library.AddBook(book4);
-        library.AddBook(book5);
-        library.AddBook(book6);
-        library.AddBook(book7);
-        library.AddBook(book8);
-        library.AddBook(book9);
-        library.AddBook(book10);
-        library.AddBook(book11);
-        library.AddBook(book12);
-        library.AddBook(book13);
-        library.AddBook(book14);
-        library.AddBook(book15);
-        library.AddBook(book16);
-        library.AddBook(book17);
-        library.AddBook(book18);
-        library.AddBook(book19);
-        library.AddBook(book20);
+        libraryWithEmail.AddBook(book1);
+        libraryWithEmail.AddBook(book2);
+        libraryWithEmail.AddBook(book3);
+        libraryWithEmail.AddBook(book4);
+        libraryWithEmail.AddBook(book5);
+        libraryWithEmail.AddBook(book6);
+        libraryWithEmail.AddBook(book7);
+        libraryWithEmail.AddBook(book8);
+        libraryWithEmail.AddBook(book9);
+        libraryWithEmail.AddBook(book10);
+        libraryWithSMS.AddBook(book11);
+        libraryWithSMS.AddBook(book12);
+        libraryWithSMS.AddBook(book13);
+        libraryWithSMS.AddBook(book14);
+        libraryWithSMS.AddBook(book15);
+        libraryWithSMS.AddBook(book16);
+        libraryWithSMS.AddBook(book17);
+        libraryWithSMS.AddBook(book18);
+        libraryWithSMS.AddBook(book19);
+        libraryWithSMS.AddBook(book20);
 
-        library.FindBooksByTitle("1984");
-        library.FindUsersByName("Alice");
+        //library.FindBooksByTitle("1984");
+        //library.FindUsersByName("Alice");
 
-        library.GetBooks(page: 1, pageSize: 10);
-        library.GetUsers(page: 1, pageSize: 10);
+        //library.GetBooks(page: 1, pageSize: 10);
+        //library.GetUsers(page: 1, pageSize: 10);
 
-        library.DeleteBook(book1.Id);
-        library.DeleteUser(user1.Id);
-        library.DeleteUser(user1.Id);
+        libraryWithEmail.DeleteBook(book1.Id);
+        libraryWithEmail.DeleteUser(user1.Id);
+        libraryWithEmail.DeleteUser(user1.Id);
 
 
         
