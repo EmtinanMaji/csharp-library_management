@@ -132,7 +132,7 @@ public class Library
         Console.WriteLine($"Showing page {page} of books:");
         foreach (var book in getBooks)
         {
-            Console.WriteLine($" - {book.Title}, Created Date: {book.CreatedDate}");
+            Console.WriteLine($" - {book.Title}, Created Date: {book.CreatedDate}.");
         }
         return getBooks;
     }
@@ -143,11 +143,10 @@ public class Library
         Console.WriteLine($"Showing page {page} of users:");
         foreach (var user in getUsers)
         {
-            Console.WriteLine($" - {user.Title}, Created Date: {user.CreatedDate}");
+            Console.WriteLine($" - {user.Title}, Created Date: {user.CreatedDate}.");
         }
         return getUsers;
     }
-
 
     public void DeleteBook(Guid id)
     {
